@@ -1,0 +1,1 @@
+- [Sprite layer masking](sprite-layer-masking.md) — isolate accessory pixels from full-character sheets before compositing them over hair and body layers.
