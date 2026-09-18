@@ -188,7 +188,16 @@ export function SpriteAvatarPreview({
       ctx.restore();
 
       if (pStyle !== 'none') {
+        // The world renderer draws at 92px (460 * 0.20), while this canvas
+        // can be 280px or another wardrobe size. Match the same scale used
+        // by the hair and accessory overlays.
+        const pantsScale = s / 92;
+        ctx.save();
+        ctx.translate(feetX, feetY);
+        ctx.scale(pantsScale, pantsScale);
+        ctx.translate(-feetX, -feetY);
         drawPantsLayer(ctx, feetX, feetY, row, flip, pStyle, 'idle', frame);
+        ctx.restore();
       }
 
       if (hStyle && hStyle !== 'none') {
