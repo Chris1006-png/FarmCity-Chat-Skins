@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { drawHairLayer, FACING_MAP } from '@/lib/hair-renderer';
 import { drawAccessoryLayer } from '@/lib/accessory-renderer';
+import { drawPantsLayer } from '@/lib/pants-renderer';
 import { tintLightBodyPixels } from '@/lib/solid-body-tint';
 
 /**
@@ -34,6 +35,7 @@ export interface SpriteAvatarPreviewProps {
   hairColor:   string;
   shirtColor:  string;
   pantsColor:  string;
+  pantsStyle?: string | null;
   /** Clothing tinting is opt-in; an undressed avatar keeps one solid body tone. */
   hasClothing?: boolean;
   /** Hair style key for the layered hair system (e.g. 'long', 'bun'). */
@@ -53,7 +55,7 @@ export interface SpriteAvatarPreviewProps {
 
 export function SpriteAvatarPreview({
   skinColor, hairColor, shirtColor, pantsColor,
-  hasClothing = false,
+  pantsStyle, hasClothing = false,
   hairStyle, accessory, accessoryColor, facing, size = 180,
 }: SpriteAvatarPreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -65,6 +67,7 @@ export function SpriteAvatarPreview({
     hairColor,
     shirtColor,
     pantsColor,
+    pantsStyle: pantsStyle ?? 'none',
     hasClothing,
     hairStyle: hairStyle ?? '',
     accessory: accessory ?? null,
@@ -76,6 +79,7 @@ export function SpriteAvatarPreview({
     hairColor,
     shirtColor,
     pantsColor,
+    pantsStyle: pantsStyle ?? 'none',
     hasClothing,
     hairStyle: hairStyle ?? '',
     accessory: accessory ?? null,
@@ -122,6 +126,7 @@ export function SpriteAvatarPreview({
 
       const {
         skinColor, hairColor, shirtColor, pantsColor,
+        pantsStyle: pStyle,
         hasClothing,
         hairStyle: hStyle, accessory: accessoryStyle, accessoryColor: aColor, facing: f,
       } = propsRef.current;
@@ -181,6 +186,10 @@ export function SpriteAvatarPreview({
       ctx.globalCompositeOperation = 'source-over';
 
       ctx.restore();
+
+      if (pStyle !== 'none') {
+        drawPantsLayer(ctx, feetX, feetY, row, flip, pStyle, 'idle', frame);
+      }
 
       if (hStyle && hStyle !== 'none') {
         // The game renders 460px sprite frames at CHAR_SCALE 0.20 (92px).

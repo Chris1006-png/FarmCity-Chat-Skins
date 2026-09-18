@@ -12,6 +12,7 @@ export interface AvatarOptions {
   hairStyles: string[];
   shirtColors: string[];
   pantColors: string[];
+  pantsStyles: string[];
   hatStyles: string[];
   accessories: string[];
   accessoryColors: string[];

@@ -14,6 +14,7 @@ export interface Avatar {
   hairStyle: string;
   shirtColor: string;
   pantsColor: string;
+  pantsStyle: string;
   /** @nullable */
   hatStyle: string | null;
   /** @nullable */

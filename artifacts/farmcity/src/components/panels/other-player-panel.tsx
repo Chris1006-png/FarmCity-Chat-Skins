@@ -60,8 +60,8 @@ export function OtherPlayerPanel({ player, onClose }: OtherPlayerPanelProps) {
               <svg width="44" height="44" viewBox="0 0 16 16" style={{ imageRendering: 'pixelated' }}>
                 <rect x="5" y="14" width="2" height="1" fill="#2A2A2A" />
                 <rect x="9" y="14" width="2" height="1" fill="#2A2A2A" />
-                <rect x="5" y="10" width="3" height="5" fill={av.pantsColor} />
-                <rect x="8" y="10" width="3" height="5" fill={av.pantsColor} />
+                <rect x="5" y="10" width="3" height="5" fill={av.pantsStyle === 'black-simple' ? '#141414' : av.pantsColor} />
+                <rect x="8" y="10" width="3" height="5" fill={av.pantsStyle === 'black-simple' ? '#141414' : av.pantsColor} />
                 <rect x="4" y="6" width="8" height="5" fill={av.shirtColor} />
                 <rect x="2" y="6" width="2" height="4" fill={av.shirtColor} />
                 <rect x="12" y="6" width="2" height="4" fill={av.shirtColor} />

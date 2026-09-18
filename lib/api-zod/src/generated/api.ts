@@ -42,6 +42,7 @@ export const RegisterResponse = zod.object({
   "hairStyle": zod.string(),
   "shirtColor": zod.string(),
   "pantsColor": zod.string(),
+  "pantsStyle": zod.string(),
   "hatStyle": zod.string().nullable(),
   "accessory": zod.string().nullable(),
   "accessoryColor": zod.string()
@@ -77,6 +78,7 @@ export const LoginResponse = zod.object({
   "hairStyle": zod.string(),
   "shirtColor": zod.string(),
   "pantsColor": zod.string(),
+  "pantsStyle": zod.string(),
   "hatStyle": zod.string().nullable(),
   "accessory": zod.string().nullable(),
   "accessoryColor": zod.string()
@@ -114,6 +116,7 @@ export const GetMeResponse = zod.object({
   "hairStyle": zod.string(),
   "shirtColor": zod.string(),
   "pantsColor": zod.string(),
+  "pantsStyle": zod.string(),
   "hatStyle": zod.string().nullable(),
   "accessory": zod.string().nullable(),
   "accessoryColor": zod.string()
@@ -161,6 +164,7 @@ export const UpdateProfileResponse = zod.object({
   "hairStyle": zod.string(),
   "shirtColor": zod.string(),
   "pantsColor": zod.string(),
+  "pantsStyle": zod.string(),
   "hatStyle": zod.string().nullable(),
   "accessory": zod.string().nullable(),
   "accessoryColor": zod.string()
@@ -184,6 +188,7 @@ export const GetPlayersOnlineResponseItem = zod.object({
   "hairStyle": zod.string(),
   "shirtColor": zod.string(),
   "pantsColor": zod.string(),
+  "pantsStyle": zod.string(),
   "hatStyle": zod.string().nullable(),
   "accessory": zod.string().nullable(),
   "accessoryColor": zod.string()
@@ -218,6 +223,7 @@ export const GetPlayerResponse = zod.object({
   "hairStyle": zod.string(),
   "shirtColor": zod.string(),
   "pantsColor": zod.string(),
+  "pantsStyle": zod.string(),
   "hatStyle": zod.string().nullable(),
   "accessory": zod.string().nullable(),
   "accessoryColor": zod.string()
@@ -236,6 +242,7 @@ export const GetAvatarResponse = zod.object({
   "hairStyle": zod.string(),
   "shirtColor": zod.string(),
   "pantsColor": zod.string(),
+  "pantsStyle": zod.string(),
   "hatStyle": zod.string().nullable(),
   "accessory": zod.string().nullable(),
   "accessoryColor": zod.string()
@@ -251,6 +258,7 @@ export const SaveAvatarBody = zod.object({
   "hairStyle": zod.string(),
   "shirtColor": zod.string(),
   "pantsColor": zod.string(),
+  "pantsStyle": zod.string(),
   "hatStyle": zod.string().nullish(),
   "accessory": zod.string().nullish(),
   "accessoryColor": zod.string().optional()
@@ -264,6 +272,7 @@ export const SaveAvatarResponse = zod.object({
   "hairStyle": zod.string(),
   "shirtColor": zod.string(),
   "pantsColor": zod.string(),
+  "pantsStyle": zod.string(),
   "hatStyle": zod.string().nullable(),
   "accessory": zod.string().nullable(),
   "accessoryColor": zod.string()
@@ -279,6 +288,7 @@ export const GetAvatarOptionsResponse = zod.object({
   "hairStyles": zod.array(zod.string()),
   "shirtColors": zod.array(zod.string()),
   "pantColors": zod.array(zod.string()),
+  "pantsStyles": zod.array(zod.string()),
   "hatStyles": zod.array(zod.string()),
   "accessories": zod.array(zod.string()),
   "accessoryColors": zod.array(zod.string())

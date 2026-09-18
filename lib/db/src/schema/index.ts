@@ -23,6 +23,7 @@ export const avatarsTable = pgTable("avatars", {
   hairStyle: text("hair_style").notNull(),
   shirtColor: text("shirt_color").notNull(),
   pantsColor: text("pants_color").notNull(),
+  pantsStyle: text("pants_style").default("none").notNull(),
   hatStyle: text("hat_style"),
   accessory: text("accessory"),
   accessoryColor: text("accessory_color").default("#A9F0F0").notNull(),

@@ -364,6 +364,8 @@ components:
           type: string
         pantsColor:
           type: string
+        pantsStyle:
+          type: string
         hatStyle:
           type: ["string", "null"]
         accessory:
@@ -378,6 +380,7 @@ components:
         - hairStyle
         - shirtColor
         - pantsColor
+        - pantsStyle
         - hatStyle
         - accessory
         - accessoryColor
@@ -395,6 +398,8 @@ components:
           type: string
         pantsColor:
           type: string
+        pantsStyle:
+          type: string
         hatStyle:
           type: ["string", "null"]
         accessory:
@@ -407,6 +412,7 @@ components:
         - hairStyle
         - shirtColor
         - pantsColor
+        - pantsStyle
 
     AvatarOptions:
       type: object
@@ -431,6 +437,10 @@ components:
           type: array
           items:
             type: string
+        pantsStyles:
+          type: array
+          items:
+            type: string
         hatStyles:
           type: array
           items:
@@ -449,6 +459,7 @@ components:
         - hairStyles
         - shirtColors
         - pantColors
+        - pantsStyles
         - hatStyles
         - accessories
         - accessoryColors

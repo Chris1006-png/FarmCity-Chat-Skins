@@ -122,7 +122,8 @@ function PanelFrame({
 function AvatarSprite({ avatar }: { avatar: Avatar }) {
   const hasClothing =
     avatar.shirtColor !== avatar.skinColor ||
-    avatar.pantsColor !== avatar.skinColor;
+    avatar.pantsColor !== avatar.skinColor ||
+    avatar.pantsStyle !== 'none';
 
   return (
     <div className="farmcity-profile-panel__avatar-frame" data-testid="img-profile-avatar">
@@ -132,6 +133,7 @@ function AvatarSprite({ avatar }: { avatar: Avatar }) {
           hairColor={avatar.hairColor}
           shirtColor={avatar.shirtColor}
           pantsColor={avatar.pantsColor}
+           pantsStyle={avatar.pantsStyle}
           hasClothing={hasClothing}
           hairStyle={avatar.hairStyle}
           accessory={avatar.accessory}

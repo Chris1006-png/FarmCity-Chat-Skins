@@ -39,6 +39,11 @@ import {
   DEFAULT_ACCESSORY_COLOR,
   drawAccessoryThumbnail,
 } from '@/lib/accessory-renderer';
+import {
+  PANTS_STYLES,
+  PANTS_STYLE_LABELS,
+  drawPantsThumbnail,
+} from '@/lib/pants-renderer';
 
 type CategoryKey =
   | 'hair'
@@ -195,6 +200,37 @@ function AccessoryThumbnail({
   );
 }
 
+function PantsThumbnail({ pantsStyle }: { pantsStyle: string }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext('2d');
+    if (!canvas || !context) return;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.imageSmoothingEnabled = false;
+
+    let frameId = 0;
+    const draw = () => {
+      const ready = drawPantsThumbnail(context, canvas.width, pantsStyle);
+      if (!ready) frameId = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => cancelAnimationFrame(frameId);
+  }, [pantsStyle]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={112}
+      height={86}
+      className="wardrobe-hair-thumbnail"
+      data-testid={`canvas-pants-thumbnail-${pantsStyle}`}
+      aria-hidden="true"
+    />
+  );
+}
+
 function EmptyCatalog({ category }: { category: Category }) {
   const Icon = category.icon;
 
@@ -251,6 +287,7 @@ export default function AvatarCreator() {
   const [hairStyle, setHairStyle] = useState(HAIR_STYLES[0] ?? 'none');
   const [shirtColor, setShirtColor] = useState(DEFAULT_SHIRT_COLORS[0]);
   const [pantsColor, setPantsColor] = useState(DEFAULT_PANTS_COLORS[0]);
+  const [pantsStyle, setPantsStyle] = useState('none');
   const [accessory, setAccessory] = useState('none');
   const [accessoryColor, setAccessoryColor] = useState(DEFAULT_ACCESSORY_COLOR);
 
@@ -267,6 +304,7 @@ export default function AvatarCreator() {
     setHairStyle(existingAvatar.hairStyle || 'none');
     setShirtColor(existingAvatar.shirtColor);
     setPantsColor(existingAvatar.pantsColor);
+    setPantsStyle(existingAvatar.pantsStyle || 'none');
     setAccessory(existingAvatar.accessory || 'none');
     setAccessoryColor(existingAvatar.accessoryColor || DEFAULT_ACCESSORY_COLOR);
   }, [existingAvatar?.playerId]);
@@ -295,10 +333,12 @@ export default function AvatarCreator() {
   const accessories = options?.accessories?.length ? options.accessories : ACCESSORY_STYLES;
   const accessoryColors = options?.accessoryColors?.length ? options.accessoryColors : ACCESSORY_COLORS;
   const shirtColors = options?.shirtColors?.length ? options.shirtColors : DEFAULT_SHIRT_COLORS;
-  // Clothing sprites are not available yet, so clothing colors stay tied to
-  // the body color until a garment is actually equipped.
+  const pantsStyles = PANTS_STYLES;
+  const filteredPantsStyles = pantsStyles.filter((style) =>
+    (PANTS_STYLE_LABELS[style] ?? style).toLowerCase().includes(search.trim().toLowerCase()),
+  );
   const hasShirtEquipped = false;
-  const hasPantsEquipped = false;
+  const hasPantsEquipped = pantsStyle !== 'none';
   const previewShirtColor = hasShirtEquipped ? shirtColor : skinColor;
   const previewPantsColor = hasPantsEquipped ? pantsColor : skinColor;
   const filteredHairStyles = hairStyles.filter((style) =>
@@ -319,6 +359,7 @@ export default function AvatarCreator() {
         hairStyle,
         shirtColor: hasShirtEquipped ? shirtColor : skinColor,
         pantsColor: hasPantsEquipped ? pantsColor : skinColor,
+        pantsStyle,
         hatStyle: null,
          accessory: accessory === 'none' ? null : accessory,
          accessoryColor,
@@ -545,6 +586,8 @@ export default function AvatarCreator() {
                     ? `${filteredHairStyles.length} ELEMENTOS`
                     : activeCategory === 'accessories'
                       ? `${filteredAccessories.length} ELEMENTOS`
+                      : activeCategory === 'pants'
+                        ? `${filteredPantsStyles.length} ELEMENTOS`
                       : '0 ELEMENTOS'}
                </span>
             </div>
@@ -601,7 +644,31 @@ export default function AvatarCreator() {
                     );
                   })}
                 </div>
-               ) : isOptionsError ? (
+                ) : activeCategory === 'pants' ? (
+                 <div className="wardrobe-item-grid">
+                   {filteredPantsStyles.map((item) => {
+                     const selected = pantsStyle === item;
+                     return (
+                       <button
+                         type="button"
+                         key={item}
+                         className={`wardrobe-item ${selected ? 'wardrobe-item-selected' : ''}`}
+                         data-testid={`button-pants-${item}`}
+                         aria-pressed={selected}
+                         onClick={() => setPantsStyle(item)}
+                       >
+                         <span className="wardrobe-item-preview">
+                           <PantsThumbnail pantsStyle={item} />
+                         </span>
+                         <span className="wardrobe-item-name">
+                           {PANTS_STYLE_LABELS[item] ?? item}
+                         </span>
+                         {selected ? <span className="wardrobe-item-check"><Check size={14} strokeWidth={2.5} /></span> : null}
+                       </button>
+                     );
+                   })}
+                 </div>
+                ) : isOptionsError ? (
                 <div className="wardrobe-empty wardrobe-empty-error" data-testid="status-catalog-error">
                   <div className="wardrobe-empty-icon"><Crosshair size={27} strokeWidth={1.5} /></div>
                   <h3>No pudimos cargar el catálogo</h3>

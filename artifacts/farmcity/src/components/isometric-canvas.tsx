@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { PlayerSummary, Avatar } from '@workspace/api-client-react';
 import { drawHairLayer } from '@/lib/hair-renderer';
 import { drawAccessoryLayer } from '@/lib/accessory-renderer';
+import { drawPantsLayer } from '@/lib/pants-renderer';
 import { tintLightBodyPixels } from '@/lib/solid-body-tint';
 import { roomTextureColors } from '@/lib/room-textures';
 
@@ -39,6 +40,7 @@ type AvatarColors = {
   skin: string;
   shirt: string;
   pants: string;
+  pantsStyle?: string | null;
   hasClothing?: boolean;
 };
 
@@ -801,6 +803,7 @@ function bubblePortraitKey(avatar: Avatar | undefined): string {
     avatar.hairStyle,
     avatar.shirtColor,
     avatar.pantsColor,
+    avatar.pantsStyle ?? 'none',
     avatar.accessory ?? 'none',
     avatar.accessoryColor,
   ].join('|');
@@ -830,9 +833,11 @@ function drawBubblePortrait(
           skin: avatar.skinColor,
           shirt: avatar.shirtColor,
           pants: avatar.pantsColor,
+           pantsStyle: avatar.pantsStyle,
           hasClothing:
             avatar.shirtColor !== avatar.skinColor ||
-            avatar.pantsColor !== avatar.skinColor,
+             avatar.pantsColor !== avatar.skinColor ||
+             avatar.pantsStyle !== 'none',
         }
       : undefined;
     const portraitState: CharAnimState = {
@@ -851,6 +856,16 @@ function drawBubblePortrait(
       '',
       colors,
       { drawName: false },
+    );
+    drawPantsLayer(
+      portraitCtx,
+      46,
+      86,
+      0,
+      false,
+      avatar?.pantsStyle,
+      'idle',
+      0,
     );
 
     if (avatar?.hairStyle && avatar.hairStyle !== 'none') {
@@ -1613,14 +1628,29 @@ export function IsometricCanvas({
       const lColors: AvatarColors | undefined = lAvatar ? {
         hair:  lAvatar.hairColor,
         skin:  lAvatar.skinColor,
-        shirt: lAvatar.skinColor,
-        pants: lAvatar.skinColor,
+         shirt: lAvatar.shirtColor,
+         pants: lAvatar.pantsColor,
+         pantsStyle: lAvatar.pantsStyle,
+         hasClothing:
+           lAvatar.shirtColor !== lAvatar.skinColor ||
+           lAvatar.pantsColor !== lAvatar.skinColor ||
+           lAvatar.pantsStyle !== 'none',
       } : undefined;
       entities.push({
         depth: posRef.current.x + posRef.current.y,
         draw: () => {
           const lFeetY = lsy + TILE_H / 2;
           drawSpriteCharacter(ctx, lsx, lFeetY, lStateSnap, 'Tú', lColors);
+           drawPantsLayer(
+             ctx,
+             lsx,
+             lFeetY,
+             lStateSnap.row,
+             lStateSnap.flip,
+             lAvatar?.pantsStyle,
+             lStateSnap.animKey,
+             lStateSnap.frame,
+           );
 if (lAvatar?.hairStyle && lAvatar.hairStyle !== 'none') {
   const SIT_HAIR_Y_ADJUST = 12; // ajustar este número según pruebas
   const isSitting = lStateSnap.animKey === 'sit' || lStateSnap.animKey === 'sit_loop';
@@ -1751,14 +1781,29 @@ if (lAvatar?.hairStyle && lAvatar.hairStyle !== 'none') {
         const rColors: AvatarColors | undefined = p.avatar ? {
           hair:  p.avatar.hairColor,
           skin:  p.avatar.skinColor,
-          shirt: p.avatar.skinColor,
-          pants: p.avatar.skinColor,
+           shirt: p.avatar.shirtColor,
+           pants: p.avatar.pantsColor,
+           pantsStyle: p.avatar.pantsStyle,
+           hasClothing:
+             p.avatar.shirtColor !== p.avatar.skinColor ||
+             p.avatar.pantsColor !== p.avatar.skinColor ||
+             p.avatar.pantsStyle !== 'none',
         } : undefined;
         entities.push({
           depth,
           draw: () => {
             const rFeetY = ry + TILE_H / 2;
             drawSpriteCharacter(ctx, rx, rFeetY, rStateSnap, p.username, rColors);
+             drawPantsLayer(
+               ctx,
+               rx,
+               rFeetY,
+               rStateSnap.row,
+               rStateSnap.flip,
+               p.avatar?.pantsStyle,
+               rStateSnap.animKey,
+               rStateSnap.frame,
+             );
             if (p.avatar?.hairStyle && p.avatar.hairStyle !== 'none') {
               const SIT_HAIR_Y_ADJUST = 12;
               const isSitting = rStateSnap.animKey === 'sit' || rStateSnap.animKey === 'sit_loop';
