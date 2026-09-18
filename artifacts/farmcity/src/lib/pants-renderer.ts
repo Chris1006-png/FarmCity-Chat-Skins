@@ -25,7 +25,8 @@ type SheetConfig = {
 const SHEET_WIDTH = 460;
 const SHEET_SCALE = 0.20;
 const SHEET_FOOT_Y = 430;
-const BACKGROUND_THRESHOLD = 235;
+const BACKGROUND_THRESHOLD = 220;
+const MIN_COMPONENT_AREA = 12;
 
 const SHEETS: Record<PantsAnimation, SheetConfig> = {
   idle: {
@@ -96,22 +97,65 @@ function getPantsMask(
   );
 
   const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+  const foreground = new Uint8Array(canvas.width * canvas.height);
   for (let index = 0; index < pixels.data.length; index += 4) {
     const red = pixels.data[index];
     const green = pixels.data[index + 1];
     const blue = pixels.data[index + 2];
-    const isBackground =
-      red >= BACKGROUND_THRESHOLD &&
-      green >= BACKGROUND_THRESHOLD &&
-      blue >= BACKGROUND_THRESHOLD;
+    const luminance = red * 0.299 + green * 0.587 + blue * 0.114;
+    const pixelIndex = index / 4;
+    if (luminance < BACKGROUND_THRESHOLD) {
+      foreground[pixelIndex] = 1;
+    }
+    pixels.data[index] = 0;
+    pixels.data[index + 1] = 0;
+    pixels.data[index + 2] = 0;
+    pixels.data[index + 3] = 0;
+  }
 
-    if (isBackground) {
-      pixels.data[index] = 0;
-      pixels.data[index + 1] = 0;
-      pixels.data[index + 2] = 0;
-      pixels.data[index + 3] = 0;
-    } else {
-      pixels.data[index + 3] = 255;
+  // The source sheets contain a few isolated dark specks outside the garment.
+  // Keep only connected components large enough to belong to the pants. This
+  // also removes pale matte remnants that would otherwise show as white dots.
+  const visited = new Uint8Array(foreground.length);
+  const neighbors = [
+    [-1, -1], [0, -1], [1, -1],
+    [-1, 0],            [1, 0],
+    [-1, 1],  [0, 1],  [1, 1],
+  ] as const;
+
+  for (let start = 0; start < foreground.length; start += 1) {
+    if (!foreground[start] || visited[start]) continue;
+
+    const component: number[] = [];
+    const queue = [start];
+    visited[start] = 1;
+
+    for (let cursor = 0; cursor < queue.length; cursor += 1) {
+      const current = queue[cursor];
+      component.push(current);
+      const x = current % canvas.width;
+      const y = Math.floor(current / canvas.width);
+
+      for (const [offsetX, offsetY] of neighbors) {
+        const nextX = x + offsetX;
+        const nextY = y + offsetY;
+        if (
+          nextX < 0 ||
+          nextX >= canvas.width ||
+          nextY < 0 ||
+          nextY >= canvas.height
+        ) continue;
+        const next = nextY * canvas.width + nextX;
+        if (foreground[next] && !visited[next]) {
+          visited[next] = 1;
+          queue.push(next);
+        }
+      }
+    }
+
+    if (component.length < MIN_COMPONENT_AREA) continue;
+    for (const pixelIndex of component) {
+      pixels.data[pixelIndex * 4 + 3] = 255;
     }
   }
 
