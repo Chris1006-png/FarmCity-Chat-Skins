@@ -87,13 +87,9 @@ const DEFAULT_SHIRT_COLORS = [
   '#26344d',
 ];
 
-const DEFAULT_PANTS_COLORS = [
-  '#202339',
-  '#3e2d54',
-  '#31475a',
-  '#5c3942',
-  '#78634f',
-];
+// Kept only for the API's required pantsColor field. The visible garment is
+// controlled by pantsStyle and its own sprite, not by a color swatch.
+const GRAPHIC_PANTS_COLOR = '#141414';
 
 const DEFAULT_HAIR_COLORS = [
   '#17131F',
@@ -286,7 +282,6 @@ export default function AvatarCreator() {
   const [hairColor, setHairColor] = useState(DEFAULT_HAIR_COLORS[0]);
   const [hairStyle, setHairStyle] = useState(HAIR_STYLES[0] ?? 'none');
   const [shirtColor, setShirtColor] = useState(DEFAULT_SHIRT_COLORS[0]);
-  const [pantsColor, setPantsColor] = useState(DEFAULT_PANTS_COLORS[0]);
   const [pantsStyle, setPantsStyle] = useState('none');
   const [accessory, setAccessory] = useState('none');
   const [accessoryColor, setAccessoryColor] = useState(DEFAULT_ACCESSORY_COLOR);
@@ -303,7 +298,6 @@ export default function AvatarCreator() {
     setHairColor(existingAvatar.hairColor);
     setHairStyle(existingAvatar.hairStyle || 'none');
     setShirtColor(existingAvatar.shirtColor);
-    setPantsColor(existingAvatar.pantsColor);
     setPantsStyle(existingAvatar.pantsStyle || 'none');
     setAccessory(existingAvatar.accessory || 'none');
     setAccessoryColor(existingAvatar.accessoryColor || DEFAULT_ACCESSORY_COLOR);
@@ -340,7 +334,7 @@ export default function AvatarCreator() {
   const hasShirtEquipped = false;
   const hasPantsEquipped = pantsStyle !== 'none';
   const previewShirtColor = hasShirtEquipped ? shirtColor : skinColor;
-  const previewPantsColor = hasPantsEquipped ? pantsColor : skinColor;
+  const previewPantsColor = hasPantsEquipped ? GRAPHIC_PANTS_COLOR : skinColor;
   const filteredHairStyles = hairStyles.filter((style) =>
     (HAIR_STYLE_LABELS[style] ?? style).toLowerCase().includes(search.trim().toLowerCase()),
   );
@@ -358,7 +352,7 @@ export default function AvatarCreator() {
         hairColor,
         hairStyle,
         shirtColor: hasShirtEquipped ? shirtColor : skinColor,
-        pantsColor: hasPantsEquipped ? pantsColor : skinColor,
+        pantsColor: hasPantsEquipped ? GRAPHIC_PANTS_COLOR : skinColor,
         pantsStyle,
         hatStyle: null,
          accessory: accessory === 'none' ? null : accessory,
@@ -538,23 +532,6 @@ export default function AvatarCreator() {
                 )}
               </div>
 
-              <div className="wardrobe-color-group">
-                <span>PANTALÓN</span>
-                {hasPantsEquipped ? (
-                  <div className="wardrobe-swatches">
-                    {DEFAULT_PANTS_COLORS.map((color) => (
-                      <ColorSwatch
-                        key={color}
-                        color={color}
-                        selected={pantsColor === color}
-                        onClick={() => setPantsColor(color)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <LockedColorOption garment="pantalón" />
-                )}
-              </div>
             </div>
           </aside>
 
