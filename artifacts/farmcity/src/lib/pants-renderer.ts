@@ -199,10 +199,13 @@ export function drawPantsThumbnail(
   if (!bounds) return true;
 
   const [sourceX, sourceY, sourceWidth, sourceHeight] = bounds;
-  const padding = Math.round(size * 0.12);
+  // Pants are naturally much shorter than the full character frame. Use
+  // compact vertical padding so the catalog card shows the garment clearly.
+  const paddingX = Math.round(size * 0.10);
+  const paddingY = Math.round(size * 0.06);
   const scale = Math.min(
-    (size - padding * 2) / sourceWidth,
-    (size - padding * 2) / sourceHeight,
+    (size - paddingX * 2) / sourceWidth,
+    (size - paddingY * 2) / sourceHeight,
   );
   const targetWidth = sourceWidth * scale;
   const targetHeight = sourceHeight * scale;

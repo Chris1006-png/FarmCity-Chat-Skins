@@ -440,6 +440,7 @@ export default function AvatarCreator() {
                 hairColor={hairColor}
                 shirtColor={previewShirtColor}
                 pantsColor={previewPantsColor}
+                 pantsStyle={pantsStyle}
                 hasClothing={hasShirtEquipped || hasPantsEquipped}
                 hairStyle={hairStyle}
                 accessory={accessory}
