@@ -273,8 +273,9 @@ function drawSpriteCharacter(
       tc.fillRect(w * 0.05, h * 0.51, w * 0.19, h * 0.14);
       tc.fillRect(w * 0.76, h * 0.51, w * 0.19, h * 0.14);
 
-      // Pants — legs
-      tc.fillStyle = pants;
+      // Graphic pants are composited as a separate layer. Do not leave the
+      // legacy pants-color tint underneath the supplied garment sprite.
+      tc.fillStyle = colors.pantsStyle === 'black-simple' ? skin : pants;
       tc.fillRect(w * 0.25, h * 0.72, w * 0.50, h * 0.21);
     }
 

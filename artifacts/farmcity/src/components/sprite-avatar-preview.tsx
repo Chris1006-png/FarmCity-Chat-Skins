@@ -163,8 +163,10 @@ export function SpriteAvatarPreview({
         tCtx.fillRect(w * 0.05, h * 0.51, w * 0.19, h * 0.14);
         tCtx.fillRect(w * 0.76, h * 0.51, w * 0.19, h * 0.14);
 
-        // Pants — legs
-        tCtx.fillStyle = pantsColor;
+        // Graphic pants are drawn as a separate layer below. Keep the body
+        // underlay in the skin tone so no legacy pants-color block leaks
+        // around or below the supplied garment sprite.
+        tCtx.fillStyle = pStyle === 'black-simple' ? skinColor : pantsColor;
         tCtx.fillRect(w * 0.25, h * 0.72, w * 0.50, h * 0.21);
       }
 
