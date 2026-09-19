@@ -104,10 +104,13 @@ function getShirtMask(
     const blue = pixels.data[index + 2];
     const luminance = red * 0.299 + green * 0.587 + blue * 0.114;
     const pixelIndex = index / 4;
-    if (luminance < BACKGROUND_THRESHOLD) foreground[pixelIndex] = 1;
-    pixels.data[index] = 0;
-    pixels.data[index + 1] = 0;
-    pixels.data[index + 2] = 0;
+    if (luminance < BACKGROUND_THRESHOLD) {
+      foreground[pixelIndex] = 1;
+    } else {
+      pixels.data[index] = 0;
+      pixels.data[index + 1] = 0;
+      pixels.data[index + 2] = 0;
+    }
     pixels.data[index + 3] = 0;
   }
 
@@ -148,7 +151,14 @@ function getShirtMask(
       }
     }
 
-    if (component.length < MIN_COMPONENT_AREA) continue;
+    if (component.length < MIN_COMPONENT_AREA) {
+      for (const pixelIndex of component) {
+        pixels.data[pixelIndex * 4] = 0;
+        pixels.data[pixelIndex * 4 + 1] = 0;
+        pixels.data[pixelIndex * 4 + 2] = 0;
+      }
+      continue;
+    }
     for (const pixelIndex of component) {
       pixels.data[pixelIndex * 4 + 3] = 255;
     }
