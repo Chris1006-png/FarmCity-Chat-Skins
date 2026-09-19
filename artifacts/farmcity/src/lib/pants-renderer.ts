@@ -27,6 +27,9 @@ const SHEET_SCALE = 0.20;
 const SHEET_FOOT_Y = 430;
 const BACKGROUND_THRESHOLD = 220;
 const MIN_COMPONENT_AREA = 12;
+// The supplied rear-view pants sit slightly lower than the body sheet's
+// matching row. Keep the other directions on the shared foot anchor.
+const ROW_Y_OFFSETS: readonly number[] = [0, 0, 0, 0, 16];
 
 const SHEETS: Record<PantsAnimation, SheetConfig> = {
   idle: {
@@ -181,9 +184,12 @@ export function drawPantsLayer(
   if (!mask) return;
 
   const config = SHEETS[resolvedAnimation];
+  const safeRow = Math.max(0, Math.min(4, Math.round(row)));
   const fullWidth = SHEET_WIDTH * SHEET_SCALE;
   const fullX = feetX - fullWidth / 2;
-  const fullY = feetY - SHEET_FOOT_Y * SHEET_SCALE;
+  const fullY =
+    feetY -
+    (SHEET_FOOT_Y + (ROW_Y_OFFSETS[safeRow] ?? 0)) * SHEET_SCALE;
 
   context.save();
   context.imageSmoothingEnabled = false;
