@@ -21,6 +21,7 @@ const AVATAR_OPTIONS = {
 ],
   hairStyles: ["restaurado"],
   shirtColors: ["#E74C3C", "#3498DB", "#2ECC71", "#F39C12", "#9B59B6", "#1ABC9C", "#E67E22", "#ECF0F1", "#2C3E50", "#F8C471"],
+  shirtStyles: ["none", "blue-shirt"],
   pantColors: ["#2C3E50", "#6E2C00", "#1A5276", "#145A32", "#512E5F", "#17202A", "#7B7D7D", "#F0E6CA"],
   pantsStyles: ["none", "black-simple"],
   hatStyles: ["none", "cap", "sombrero", "straw", "cowboy", "beanie"],
@@ -40,11 +41,12 @@ router.get("/avatar", requireAuth as any, async (req: AuthRequest, res) => {
 
 router.post("/avatar", requireAuth as any, async (req: AuthRequest, res) => {
   const playerId = req.player!.id;
-  const { skinColor, hairColor, hairStyle, shirtColor, pantsColor, pantsStyle, hatStyle, accessory, accessoryColor } = req.body as {
+  const { skinColor, hairColor, hairStyle, shirtColor, shirtStyle, pantsColor, pantsStyle, hatStyle, accessory, accessoryColor } = req.body as {
     skinColor?: string;
     hairColor?: string;
     hairStyle?: string;
     shirtColor?: string;
+    shirtStyle?: string;
     pantsColor?: string;
     pantsStyle?: string;
     hatStyle?: string | null;
@@ -67,6 +69,7 @@ router.post("/avatar", requireAuth as any, async (req: AuthRequest, res) => {
         hairColor,
         hairStyle,
         shirtColor,
+        shirtStyle: shirtStyle ?? "none",
         pantsColor,
         pantsStyle: pantsStyle ?? "none",
         hatStyle: hatStyle ?? null,
@@ -85,6 +88,7 @@ router.post("/avatar", requireAuth as any, async (req: AuthRequest, res) => {
         hairColor,
         hairStyle,
         shirtColor,
+        shirtStyle: shirtStyle ?? "none",
         pantsColor,
         pantsStyle: pantsStyle ?? "none",
         hatStyle: hatStyle ?? null,

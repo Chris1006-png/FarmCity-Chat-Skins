@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { drawHairLayer, FACING_MAP } from '@/lib/hair-renderer';
 import { drawAccessoryLayer } from '@/lib/accessory-renderer';
 import { drawPantsLayer } from '@/lib/pants-renderer';
+import { drawShirtLayer } from '@/lib/shirt-renderer';
 import { tintLightBodyPixels } from '@/lib/solid-body-tint';
 
 /**
@@ -34,6 +35,7 @@ export interface SpriteAvatarPreviewProps {
   skinColor:   string;
   hairColor:   string;
   shirtColor:  string;
+  shirtStyle?: string | null;
   pantsColor:  string;
   pantsStyle?: string | null;
   /** Clothing tinting is opt-in; an undressed avatar keeps one solid body tone. */
@@ -54,7 +56,7 @@ export interface SpriteAvatarPreviewProps {
 }
 
 export function SpriteAvatarPreview({
-  skinColor, hairColor, shirtColor, pantsColor,
+  skinColor, hairColor, shirtColor, shirtStyle, pantsColor,
   pantsStyle, hasClothing = false,
   hairStyle, accessory, accessoryColor, facing, size = 180,
 }: SpriteAvatarPreviewProps) {
@@ -66,6 +68,7 @@ export function SpriteAvatarPreview({
     skinColor,
     hairColor,
     shirtColor,
+    shirtStyle: shirtStyle ?? 'none',
     pantsColor,
     pantsStyle: pantsStyle ?? 'none',
     hasClothing,
@@ -78,6 +81,7 @@ export function SpriteAvatarPreview({
     skinColor,
     hairColor,
     shirtColor,
+    shirtStyle: shirtStyle ?? 'none',
     pantsColor,
     pantsStyle: pantsStyle ?? 'none',
     hasClothing,
@@ -126,6 +130,7 @@ export function SpriteAvatarPreview({
 
       const {
         skinColor, hairColor, shirtColor, pantsColor,
+        shirtStyle: sStyle,
         pantsStyle: pStyle,
         hasClothing,
         hairStyle: hStyle, accessory: accessoryStyle, accessoryColor: aColor, facing: f,
@@ -158,7 +163,7 @@ export function SpriteAvatarPreview({
         tCtx.fillRect(w * 0.79, h * 0.62, w * 0.14, h * 0.08);
 
         // Shirt — torso + sleeves
-        tCtx.fillStyle = shirtColor;
+        tCtx.fillStyle = sStyle === 'blue-shirt' ? skinColor : shirtColor;
         tCtx.fillRect(w * 0.22, h * 0.51, w * 0.56, h * 0.22);
         tCtx.fillRect(w * 0.05, h * 0.51, w * 0.19, h * 0.14);
         tCtx.fillRect(w * 0.76, h * 0.51, w * 0.19, h * 0.14);
@@ -188,6 +193,16 @@ export function SpriteAvatarPreview({
       ctx.globalCompositeOperation = 'source-over';
 
       ctx.restore();
+
+      if (sStyle !== 'none') {
+        const shirtScale = s / 92;
+        ctx.save();
+        ctx.translate(feetX, feetY);
+        ctx.scale(shirtScale, shirtScale);
+        ctx.translate(-feetX, -feetY);
+        drawShirtLayer(ctx, feetX, feetY, row, flip, sStyle, 'idle', frame);
+        ctx.restore();
+      }
 
       if (pStyle !== 'none') {
         // The world renderer draws at 92px (460 * 0.20), while this canvas

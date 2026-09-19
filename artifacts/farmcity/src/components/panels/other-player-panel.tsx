@@ -62,9 +62,9 @@ export function OtherPlayerPanel({ player, onClose }: OtherPlayerPanelProps) {
                 <rect x="9" y="14" width="2" height="1" fill="#2A2A2A" />
                 <rect x="5" y="10" width="3" height="5" fill={av.pantsStyle === 'black-simple' ? '#141414' : av.pantsColor} />
                 <rect x="8" y="10" width="3" height="5" fill={av.pantsStyle === 'black-simple' ? '#141414' : av.pantsColor} />
-                <rect x="4" y="6" width="8" height="5" fill={av.shirtColor} />
-                <rect x="2" y="6" width="2" height="4" fill={av.shirtColor} />
-                <rect x="12" y="6" width="2" height="4" fill={av.shirtColor} />
+                <rect x="4" y="6" width="8" height="5" fill={av.shirtStyle === 'blue-shirt' ? '#173B91' : av.shirtColor} />
+                <rect x="2" y="6" width="2" height="4" fill={av.shirtStyle === 'blue-shirt' ? '#173B91' : av.shirtColor} />
+                <rect x="12" y="6" width="2" height="4" fill={av.shirtStyle === 'blue-shirt' ? '#173B91' : av.shirtColor} />
                 <rect x="2" y="10" width="2" height="1" fill={av.skinColor} />
                 <rect x="12" y="10" width="2" height="1" fill={av.skinColor} />
                 <rect x="7" y="5" width="2" height="1" fill={av.skinColor} />

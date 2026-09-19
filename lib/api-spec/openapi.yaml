@@ -362,6 +362,8 @@ components:
           type: string
         shirtColor:
           type: string
+        shirtStyle:
+          type: string
         pantsColor:
           type: string
         pantsStyle:
@@ -379,6 +381,7 @@ components:
         - hairColor
         - hairStyle
         - shirtColor
+        - shirtStyle
         - pantsColor
         - pantsStyle
         - hatStyle
@@ -396,6 +399,8 @@ components:
           type: string
         shirtColor:
           type: string
+        shirtStyle:
+          type: string
         pantsColor:
           type: string
         pantsStyle:
@@ -411,6 +416,7 @@ components:
         - hairColor
         - hairStyle
         - shirtColor
+        - shirtStyle
         - pantsColor
         - pantsStyle
 
@@ -430,6 +436,10 @@ components:
           items:
             type: string
         shirtColors:
+          type: array
+          items:
+            type: string
+        shirtStyles:
           type: array
           items:
             type: string
@@ -458,6 +468,7 @@ components:
         - hairColors
         - hairStyles
         - shirtColors
+        - shirtStyles
         - pantColors
         - pantsStyles
         - hatStyles

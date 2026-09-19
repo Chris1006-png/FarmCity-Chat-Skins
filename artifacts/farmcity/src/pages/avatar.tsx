@@ -44,6 +44,11 @@ import {
   PANTS_STYLE_LABELS,
   drawPantsThumbnail,
 } from '@/lib/pants-renderer';
+import {
+  SHIRT_STYLES,
+  SHIRT_STYLE_LABELS,
+  drawShirtThumbnail,
+} from '@/lib/shirt-renderer';
 
 type CategoryKey =
   | 'hair'
@@ -78,18 +83,10 @@ const DEFAULT_SKIN_COLORS = [
   '#f2e4dc',
 ];
 
-const DEFAULT_SHIRT_COLORS = [
-  '#a552b8',
-  '#3973b8',
-  '#3c9b78',
-  '#c87942',
-  '#d35a65',
-  '#26344d',
-];
-
 // Kept only for the API's required pantsColor field. The visible garment is
 // controlled by pantsStyle and its own sprite, not by a color swatch.
 const GRAPHIC_PANTS_COLOR = '#141414';
+const GRAPHIC_SHIRT_COLOR = '#173B91';
 
 const DEFAULT_HAIR_COLORS = [
   '#17131F',
@@ -227,6 +224,37 @@ function PantsThumbnail({ pantsStyle }: { pantsStyle: string }) {
   );
 }
 
+function ShirtThumbnail({ shirtStyle }: { shirtStyle: string }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext('2d');
+    if (!canvas || !context) return;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.imageSmoothingEnabled = false;
+
+    let frameId = 0;
+    const draw = () => {
+      const ready = drawShirtThumbnail(context, canvas.width, shirtStyle);
+      if (!ready) frameId = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => cancelAnimationFrame(frameId);
+  }, [shirtStyle]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={112}
+      height={86}
+      className="wardrobe-hair-thumbnail"
+      data-testid={`canvas-shirt-thumbnail-${shirtStyle}`}
+      aria-hidden="true"
+    />
+  );
+}
+
 function EmptyCatalog({ category }: { category: Category }) {
   const Icon = category.icon;
 
@@ -281,7 +309,7 @@ export default function AvatarCreator() {
   // Kept for the API contract; the color control returns with the real sprite.
   const [hairColor, setHairColor] = useState(DEFAULT_HAIR_COLORS[0]);
   const [hairStyle, setHairStyle] = useState(HAIR_STYLES[0] ?? 'none');
-  const [shirtColor, setShirtColor] = useState(DEFAULT_SHIRT_COLORS[0]);
+  const [shirtStyle, setShirtStyle] = useState('none');
   const [pantsStyle, setPantsStyle] = useState('none');
   const [accessory, setAccessory] = useState('none');
   const [accessoryColor, setAccessoryColor] = useState(DEFAULT_ACCESSORY_COLOR);
@@ -297,7 +325,7 @@ export default function AvatarCreator() {
     setSkinColor(existingAvatar.skinColor);
     setHairColor(existingAvatar.hairColor);
     setHairStyle(existingAvatar.hairStyle || 'none');
-    setShirtColor(existingAvatar.shirtColor);
+    setShirtStyle(existingAvatar.shirtStyle || 'none');
     setPantsStyle(existingAvatar.pantsStyle || 'none');
     setAccessory(existingAvatar.accessory || 'none');
     setAccessoryColor(existingAvatar.accessoryColor || DEFAULT_ACCESSORY_COLOR);
@@ -306,7 +334,6 @@ export default function AvatarCreator() {
   useEffect(() => {
     if (!options || existingAvatar) return;
     if (options.skinColors?.length) setSkinColor(options.skinColors[0]);
-    if (options.shirtColors?.length) setShirtColor(options.shirtColors[0]);
     if (options.accessoryColors?.length) setAccessoryColor(options.accessoryColors[0]);
   }, [existingAvatar, options]);
 
@@ -326,14 +353,17 @@ export default function AvatarCreator() {
   const hairStyles = options?.hairStyles?.length ? options.hairStyles : HAIR_STYLES;
   const accessories = options?.accessories?.length ? options.accessories : ACCESSORY_STYLES;
   const accessoryColors = options?.accessoryColors?.length ? options.accessoryColors : ACCESSORY_COLORS;
-  const shirtColors = options?.shirtColors?.length ? options.shirtColors : DEFAULT_SHIRT_COLORS;
+  const shirtStyles = SHIRT_STYLES;
+  const filteredShirtStyles = shirtStyles.filter((style) =>
+    (SHIRT_STYLE_LABELS[style] ?? style).toLowerCase().includes(search.trim().toLowerCase()),
+  );
   const pantsStyles = PANTS_STYLES;
   const filteredPantsStyles = pantsStyles.filter((style) =>
     (PANTS_STYLE_LABELS[style] ?? style).toLowerCase().includes(search.trim().toLowerCase()),
   );
-  const hasShirtEquipped = false;
+  const hasShirtEquipped = shirtStyle !== 'none';
   const hasPantsEquipped = pantsStyle !== 'none';
-  const previewShirtColor = hasShirtEquipped ? shirtColor : skinColor;
+  const previewShirtColor = skinColor;
   const previewPantsColor = hasPantsEquipped ? GRAPHIC_PANTS_COLOR : skinColor;
   const filteredHairStyles = hairStyles.filter((style) =>
     (HAIR_STYLE_LABELS[style] ?? style).toLowerCase().includes(search.trim().toLowerCase()),
@@ -351,7 +381,8 @@ export default function AvatarCreator() {
         skinColor,
         hairColor,
         hairStyle,
-        shirtColor: hasShirtEquipped ? shirtColor : skinColor,
+        shirtColor: hasShirtEquipped ? GRAPHIC_SHIRT_COLOR : skinColor,
+        shirtStyle,
         pantsColor: hasPantsEquipped ? GRAPHIC_PANTS_COLOR : skinColor,
         pantsStyle,
         hatStyle: null,
@@ -433,6 +464,7 @@ export default function AvatarCreator() {
                 skinColor={skinColor}
                 hairColor={hairColor}
                 shirtColor={previewShirtColor}
+                shirtStyle={shirtStyle}
                 pantsColor={previewPantsColor}
                  pantsStyle={pantsStyle}
                 hasClothing={hasShirtEquipped || hasPantsEquipped}
@@ -514,24 +546,6 @@ export default function AvatarCreator() {
                 )}
               </div>
 
-              <div className="wardrobe-color-group">
-                <span>CAMISA</span>
-                {hasShirtEquipped ? (
-                  <div className="wardrobe-swatches">
-                    {shirtColors.map((color) => (
-                      <ColorSwatch
-                        key={color}
-                        color={color}
-                        selected={shirtColor === color}
-                        onClick={() => setShirtColor(color)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <LockedColorOption garment="camisa" />
-                )}
-              </div>
-
             </div>
           </aside>
 
@@ -562,6 +576,8 @@ export default function AvatarCreator() {
                <span>
                   {activeCategory === 'hair'
                     ? `${filteredHairStyles.length} ELEMENTOS`
+                     : activeCategory === 'shirts'
+                       ? `${filteredShirtStyles.length} ELEMENTOS`
                     : activeCategory === 'accessories'
                       ? `${filteredAccessories.length} ELEMENTOS`
                       : activeCategory === 'pants'
@@ -598,7 +614,31 @@ export default function AvatarCreator() {
                    );
                  })}
                </div>
-               ) : activeCategory === 'accessories' ? (
+                ) : activeCategory === 'shirts' ? (
+                 <div className="wardrobe-item-grid">
+                   {filteredShirtStyles.map((item) => {
+                     const selected = shirtStyle === item;
+                     return (
+                       <button
+                         type="button"
+                         key={item}
+                         className={`wardrobe-item ${selected ? 'wardrobe-item-selected' : ''}`}
+                         data-testid={`button-shirt-${item}`}
+                         aria-pressed={selected}
+                         onClick={() => setShirtStyle(item)}
+                       >
+                         <span className="wardrobe-item-preview">
+                           <ShirtThumbnail shirtStyle={item} />
+                         </span>
+                         <span className="wardrobe-item-name">
+                           {SHIRT_STYLE_LABELS[item] ?? item}
+                         </span>
+                         {selected ? <span className="wardrobe-item-check"><Check size={14} strokeWidth={2.5} /></span> : null}
+                       </button>
+                     );
+                   })}
+                 </div>
+                ) : activeCategory === 'accessories' ? (
                 <div className="wardrobe-item-grid">
                   {filteredAccessories.map((item) => {
                     const selected = accessory === item;

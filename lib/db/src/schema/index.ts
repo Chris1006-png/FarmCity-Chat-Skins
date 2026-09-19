@@ -22,6 +22,7 @@ export const avatarsTable = pgTable("avatars", {
   hairColor: text("hair_color").notNull(),
   hairStyle: text("hair_style").notNull(),
   shirtColor: text("shirt_color").notNull(),
+  shirtStyle: text("shirt_style").default("none").notNull(),
   pantsColor: text("pants_color").notNull(),
   pantsStyle: text("pants_style").default("none").notNull(),
   hatStyle: text("hat_style"),

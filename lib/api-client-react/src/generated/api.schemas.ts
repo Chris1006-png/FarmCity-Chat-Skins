@@ -16,6 +16,7 @@ export interface Avatar {
   hairColor: string;
   hairStyle: string;
   shirtColor: string;
+  shirtStyle: string;
   pantsColor: string;
   pantsStyle: string;
   /** @nullable */
@@ -30,6 +31,7 @@ export interface AvatarInput {
   hairColor: string;
   hairStyle: string;
   shirtColor: string;
+  shirtStyle: string;
   pantsColor: string;
   pantsStyle: string;
   /** @nullable */
@@ -44,6 +46,7 @@ export interface AvatarOptions {
   hairColors: string[];
   hairStyles: string[];
   shirtColors: string[];
+  shirtStyles: string[];
   pantColors: string[];
   pantsStyles: string[];
   hatStyles: string[];

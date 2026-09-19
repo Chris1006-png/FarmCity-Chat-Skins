@@ -122,6 +122,7 @@ function PanelFrame({
 function AvatarSprite({ avatar }: { avatar: Avatar }) {
   const hasClothing =
     avatar.shirtColor !== avatar.skinColor ||
+    avatar.shirtStyle !== 'none' ||
     avatar.pantsColor !== avatar.skinColor ||
     avatar.pantsStyle !== 'none';
 
@@ -132,6 +133,7 @@ function AvatarSprite({ avatar }: { avatar: Avatar }) {
           skinColor={avatar.skinColor}
           hairColor={avatar.hairColor}
           shirtColor={avatar.shirtColor}
+           shirtStyle={avatar.shirtStyle}
           pantsColor={avatar.pantsColor}
            pantsStyle={avatar.pantsStyle}
           hasClothing={hasClothing}

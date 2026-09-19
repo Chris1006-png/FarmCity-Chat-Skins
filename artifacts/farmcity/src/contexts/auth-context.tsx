@@ -8,6 +8,7 @@ export interface AvatarData {
   hairColor: string;
   hairStyle: string;
   shirtColor: string;
+  shirtStyle: string;
   pantsColor: string;
   pantsStyle: string;
   hatStyle: string | null;

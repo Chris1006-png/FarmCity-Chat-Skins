@@ -3,6 +3,7 @@ import { PlayerSummary, Avatar } from '@workspace/api-client-react';
 import { drawHairLayer } from '@/lib/hair-renderer';
 import { drawAccessoryLayer } from '@/lib/accessory-renderer';
 import { drawPantsLayer } from '@/lib/pants-renderer';
+import { drawShirtLayer } from '@/lib/shirt-renderer';
 import { tintLightBodyPixels } from '@/lib/solid-body-tint';
 import { roomTextureColors } from '@/lib/room-textures';
 
@@ -39,6 +40,7 @@ type AvatarColors = {
   hair: string;
   skin: string;
   shirt: string;
+  shirtStyle?: string | null;
   pants: string;
   pantsStyle?: string | null;
   hasClothing?: boolean;
@@ -268,7 +270,7 @@ function drawSpriteCharacter(
       tc.fillRect(w * 0.79, h * 0.62, w * 0.14, h * 0.08);
 
       // Shirt — torso + sleeves
-      tc.fillStyle = shirt;
+      tc.fillStyle = colors.shirtStyle === 'blue-shirt' ? skin : shirt;
       tc.fillRect(w * 0.22, h * 0.51, w * 0.56, h * 0.22);
       tc.fillRect(w * 0.05, h * 0.51, w * 0.19, h * 0.14);
       tc.fillRect(w * 0.76, h * 0.51, w * 0.19, h * 0.14);
@@ -803,6 +805,7 @@ function bubblePortraitKey(avatar: Avatar | undefined): string {
     avatar.hairColor,
     avatar.hairStyle,
     avatar.shirtColor,
+    avatar.shirtStyle ?? 'none',
     avatar.pantsColor,
     avatar.pantsStyle ?? 'none',
     avatar.accessory ?? 'none',
@@ -833,10 +836,12 @@ function drawBubblePortrait(
           hair: avatar.hairColor,
           skin: avatar.skinColor,
           shirt: avatar.shirtColor,
+           shirtStyle: avatar.shirtStyle,
           pants: avatar.pantsColor,
            pantsStyle: avatar.pantsStyle,
           hasClothing:
-            avatar.shirtColor !== avatar.skinColor ||
+             avatar.shirtColor !== avatar.skinColor ||
+             avatar.shirtStyle !== 'none' ||
              avatar.pantsColor !== avatar.skinColor ||
              avatar.pantsStyle !== 'none',
         }
@@ -857,6 +862,16 @@ function drawBubblePortrait(
       '',
       colors,
       { drawName: false },
+    );
+    drawShirtLayer(
+      portraitCtx,
+      46,
+      86,
+      0,
+      false,
+      avatar?.shirtStyle,
+      'idle',
+      0,
     );
     drawPantsLayer(
       portraitCtx,
@@ -1630,10 +1645,12 @@ export function IsometricCanvas({
         hair:  lAvatar.hairColor,
         skin:  lAvatar.skinColor,
          shirt: lAvatar.shirtColor,
+         shirtStyle: lAvatar.shirtStyle,
          pants: lAvatar.pantsColor,
          pantsStyle: lAvatar.pantsStyle,
          hasClothing:
            lAvatar.shirtColor !== lAvatar.skinColor ||
+            lAvatar.shirtStyle !== 'none' ||
            lAvatar.pantsColor !== lAvatar.skinColor ||
            lAvatar.pantsStyle !== 'none',
       } : undefined;
@@ -1642,6 +1659,16 @@ export function IsometricCanvas({
         draw: () => {
           const lFeetY = lsy + TILE_H / 2;
           drawSpriteCharacter(ctx, lsx, lFeetY, lStateSnap, 'Tú', lColors);
+           drawShirtLayer(
+             ctx,
+             lsx,
+             lFeetY,
+             lStateSnap.row,
+             lStateSnap.flip,
+             lAvatar?.shirtStyle,
+             lStateSnap.animKey,
+             lStateSnap.frame,
+           );
            drawPantsLayer(
              ctx,
              lsx,
@@ -1783,10 +1810,12 @@ if (lAvatar?.hairStyle && lAvatar.hairStyle !== 'none') {
           hair:  p.avatar.hairColor,
           skin:  p.avatar.skinColor,
            shirt: p.avatar.shirtColor,
+           shirtStyle: p.avatar.shirtStyle,
            pants: p.avatar.pantsColor,
            pantsStyle: p.avatar.pantsStyle,
            hasClothing:
              p.avatar.shirtColor !== p.avatar.skinColor ||
+             p.avatar.shirtStyle !== 'none' ||
              p.avatar.pantsColor !== p.avatar.skinColor ||
              p.avatar.pantsStyle !== 'none',
         } : undefined;
@@ -1795,6 +1824,16 @@ if (lAvatar?.hairStyle && lAvatar.hairStyle !== 'none') {
           draw: () => {
             const rFeetY = ry + TILE_H / 2;
             drawSpriteCharacter(ctx, rx, rFeetY, rStateSnap, p.username, rColors);
+             drawShirtLayer(
+               ctx,
+               rx,
+               rFeetY,
+               rStateSnap.row,
+               rStateSnap.flip,
+               p.avatar?.shirtStyle,
+               rStateSnap.animKey,
+               rStateSnap.frame,
+             );
              drawPantsLayer(
                ctx,
                rx,
